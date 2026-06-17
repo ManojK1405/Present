@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>For Diggaja</title>
+<title>Diggaja</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@200;300;400&family=Great+Vibes&display=swap');
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -466,7 +466,7 @@ body{font-family:'Lato',sans-serif;min-height:100vh;overflow-x:hidden;background
 </head>
 <body>
 
-<a class="preview-btn" href="#" onclick="previewBirthday();return false;">&#10022; Preview Phase 2</a>
+<a id="previewBtn" class="preview-btn" href="#" style="display:none;">&#10022; Preview Phase 2</a>
 <div class="phase-label">Phase 1 &middot; Countdown</div>
 <div class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</div>
 <a class="prev-btn" id="prevBtn" href="#">&larr; Previous</a>
@@ -596,8 +596,8 @@ const lanePhotos=[
 
 // Music
 const audio=document.getElementById('bgMusic');
-audio.volume=0.55;let musicPlaying=false;
-function startMusic(){audio.play().then(()=>{musicPlaying=true;document.getElementById('musicBtn').textContent='&#127925;';}).catch(()=>{});}
+audio.volume=0.75;let musicPlaying=true;
+function startMusic(){audio.play().then(()=>{musicPlaying=true;document.getElementById('musicBtn').textContent='🎵';}).catch(()=>{});}
 function toggleMusic(){if(musicPlaying){audio.pause();musicPlaying=false;document.getElementById('musicBtn');}else{audio.play();musicPlaying=true;document.getElementById('musicBtn');}}
 const PHASE2_AUDIO_URL='assets/phase2-audio.mp3';
 let currentTrack='phase1';
@@ -1086,6 +1086,26 @@ function spawnP3Hearts(){
   }
 
 function previewBirthday(){triggerBirthday();}
+
+// Hide the preview button (we'll use keyboard shortcut) and add Shift+P listener
+(function(){
+  const previewBtn = document.getElementById('previewBtn') || document.querySelector('.preview-btn');
+  if(previewBtn){ previewBtn.style.display = 'none'; }
+
+  document.addEventListener('keydown', function(e){
+    try{
+      const active = document.activeElement;
+      const tag = active && active.tagName;
+      if(tag === 'INPUT' || tag === 'TEXTAREA' || (active && active.isContentEditable)) return;
+    }catch(err){}
+
+    if(e.key && e.key.toLowerCase() === 'p' && e.shiftKey){
+      e.preventDefault();
+      previewBirthday();
+    }
+  });
+})();
+
 updateTimer();
 const timerInterval=setInterval(updateTimer,1000);
 </script>
