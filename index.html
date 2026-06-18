@@ -549,7 +549,12 @@ body{font-family:'Lato',sans-serif;min-height:100vh;overflow-x:hidden;background
     <div class="message-box"><p class="message-text" id="msgText">until your special day</p></div>
   </div>
   <p class="scroll-hint">&#8595;&nbsp; more to come &nbsp;&#8595;</p>
-  <a class="p1-continue-btn" id="p1ContinueBtn" href="#" onclick="reopenPhase2();return false;">Continue &#8594;</a>
+  <a class="p1-continue-btn"
+   id="p1ContinueBtn"
+   href="#"
+   onclick="reopenPhase2(); return false;">
+    Continue →
+</a>
 </div>
 
 <script>
@@ -612,7 +617,7 @@ const hCfg=[{left:5,size:'1.1rem',op:0.18,dur:14,delay:0},{left:12,size:'0.8rem'
 hCfg.forEach((c,i)=>{const el=document.createElement('div');el.className='heart';el.textContent=heartSymbols[i%heartSymbols.length];const sway=(Math.random()*60-30).toFixed(0)+'px',rot=(Math.random()*30-15).toFixed(0)+'deg';el.style.cssText='left:'+c.left+'%;--size:'+c.size+';--op:'+c.op+';--dur:'+c.dur+'s;--delay:'+c.delay+'s;--sway:'+sway+';--rot:'+rot+';';layer.appendChild(el);});
 
 // Timer
-const BIRTHDAY=new Date('2026-06-18T15:19:00');
+const BIRTHDAY=new Date('2026-06-18T16:19:00');
 function pad(n){return String(n).padStart(2,'0');}
 function updateTimer(){
   const diff=BIRTHDAY-new Date();
@@ -634,24 +639,36 @@ function updateTimer(){
 // Prev button
 function showPrevBtn(fn){const b=document.getElementById('prevBtn');b.classList.add('visible');b.onclick=function(e){e.preventDefault();fn();};}
 function hidePrevBtn(){document.getElementById('prevBtn').classList.remove('visible');}
+let triggered = false;
 
-let triggered=false;
-function triggerBirthday(){
-  if(triggered)return;triggered=true;
-  clearInterval(timerInterval);
+function triggerBirthday() {
+  if (triggered) return;
+  triggered = true;
+
+  // Stop timer safely
+  if (typeof timerInterval !== "undefined") {
+    clearInterval(timerInterval);
+  }
+
   switchToPhase2Music();
   document.getElementById('flashOverlay').classList.add('flash');
   launchParticles();
-  setTimeout(()=>{
+
+  setTimeout(() => {
     document.getElementById('birthdayScreen').classList.add('active');
     initBirthdayScreen();
-    showP1ContinueBtn();
-    showPrevBtn(function(){
+
+    showPrevBtn(function () {
       document.getElementById('birthdayScreen').classList.remove('active');
       hidePrevBtn();
-      triggered=true;
+      triggered = true;
     });
-  },2000);
+  }, 2000);
+}
+
+
+function reopenPhase2() {
+  triggerBirthday();
 }
 
 function launchParticles(){
@@ -911,14 +928,9 @@ function spawnP3Hearts(){
     document.getElementById('p1ContinueBtn').classList.add('visible');
   }
 
-  function reopenPhase2(){
-    switchToPhase2Music();
-    document.getElementById('birthdayScreen').classList.add('active');
-    showPrevBtn(function(){
-      document.getElementById('birthdayScreen').classList.remove('active');
-      hidePrevBtn();
-      triggered = true;
-    });
+  const currentDate = new Date();
+  if (currentDate >= BIRTHDAY) {
+    showP1ContinueBtn();
   }
 
 
@@ -1105,9 +1117,11 @@ function previewBirthday(){triggerBirthday();}
     }
   });
 })();
+let timerInterval;
 
 updateTimer();
-const timerInterval=setInterval(updateTimer,1000);
+
+timerInterval = setInterval(updateTimer, 1000);
 </script>
 
 <!-- ══ PHASE 4 — DATE ASK ══ -->
