@@ -420,11 +420,29 @@ body{font-family:'Lato',sans-serif;min-height:100vh;overflow-x:hidden;background
 
   /* ── GIFT REVEAL ── */
   .p5-gift-reveal {
-    display:none; position:fixed; inset:0; z-index:9800;
-    background:radial-gradient(ellipse at center, #1a0030 0%, #0a0018 60%, #04000a 100%);
-    flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:2rem; gap:20px;
-  }
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9800;
+
+    background:
+        linear-gradient(
+            rgba(10,0,24,0.65),
+            rgba(4,0,10,0.85)
+        ),
+        url('./background_image.jpeg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    gap: 20px;
+}
   .p5-gift-reveal.active { display:flex; animation:p5FadeIn 1s ease forwards; }
   .p5-gift-img {
     width:min(320px,80vw); border-radius:20px;
@@ -978,89 +996,61 @@ function spawnP3Hearts(){
   }
 
   let boxClickedOnce = false;
-  function boxClicked(){
-    if(boxClickedOnce) return;
-    boxClickedOnce = true;
-    // Hide all boxes instantly
-    document.getElementById('p5Boxes').style.display='none';
-    document.getElementById('phase5Screen').classList.remove('active');
-    // Show comic panel
-    document.getElementById('p5Comic').classList.add('active');
-    spawnComicStars();
-    // After 4.5s show "just kidding"
-    setTimeout(()=>{
-      document.getElementById('p5Comic').classList.remove('active');
-      document.getElementById('p5Joking').classList.add('active');
-      setTimeout(()=>document.getElementById('p5JokingText').classList.add('show'),300);
-      // After 3s show gift reveal
-      setTimeout(()=>{
-        document.getElementById('p5Joking').classList.remove('active');
-        document.getElementById('p5GiftReveal').classList.add('active');
-        setTimeout(()=>document.getElementById('p5GiftTitle').classList.add('show'),400);
-        setTimeout(()=>{
-          const vid = document.getElementById('p5GiftVideo');
-          if(vid && typeof vid.play === 'function'){
-            vid.classList.add('show');
-            vid.currentTime = 0;
-            vid.play().catch(()=>{});
-            vid.onended = function(){
-              vid._reversed = true;
-              let t = vid.duration;
-              const rev = setInterval(()=>{
-                t -= 0.04;
-                if(t <= 0){
-                  clearInterval(rev);
-                  vid._reversed = false;
-                  vid.currentTime = 0;
-                  vid.play().catch(()=>{});
-                } else {
-                  vid.currentTime = t;
-                }
-              }, 40);
-            };
-          }
-        },800);
-        setTimeout(()=>document.getElementById('p5GiftSub').classList.add('show'),1200);
-        launchGiftConfetti();
-        // Show prev button on gift screen
-        showPrevBtn(function(){
-          // Reset and go back through phases
-          document.getElementById('p5GiftReveal').classList.remove('active');
-          document.getElementById('p5Joking').classList.remove('active');
-          document.getElementById('p5Comic').classList.remove('active');
-          boxClickedOnce=false;
-          document.getElementById('p5Boxes').style.display='';
-          ['p5Box1','p5Box2','p5Box3','p5IntroTitle','p5IntroSub'].forEach(id=>{
-            const el=document.getElementById(id);
-            if(el){el.classList.remove('show');}
-          });
-          document.getElementById('phase5Screen').classList.add('active');
-          showPrevBtn(function(){
-            document.getElementById('phase5Screen').classList.remove('active');
-            hidePrevBtn();
-            document.getElementById('p4Celebration').classList.add('active');
-            showPrevBtn(function(){
-              document.getElementById('p4Celebration').classList.remove('active');
-              document.getElementById('phase4Screen').classList.add('active');
-              document.getElementById('p4No').classList.add('show');
-              showPrevBtn(function(){
-                document.getElementById('phase4Screen').classList.remove('active');
-                document.getElementById('p4No').classList.remove('show');
-                noClickCount=0;
-                showPrevBtn(function(){
-                  document.getElementById('phase3Screen').classList.remove('active');
-                  showPrevBtn(function(){
-                    document.getElementById('birthdayScreen').classList.remove('active');
-                    hidePrevBtn(); triggered=true;
-                  });
-                });
-              });
-            });
-          });
-        });
-      }, 3000);
-    }, 4500);
+  function boxClicked(boxNum) {
+    if(boxNum === 1){
+    alert("Oops… nothing here 👀\n\nTry another box 😜");
+    return;
   }
+
+  if(boxNum === 2){
+    alert("Congratulations 🎉\n\nYou've just unlocked unlimited hugs and kisses from me for lifetime 🫂💋❤️");
+    return;
+  }
+
+  // Only Box 3 continues
+  if(boxClickedOnce) return;
+  boxClickedOnce = true;
+  // Hide boxes
+  document.getElementById('p5Boxes').style.display = 'none';
+
+  // Show comic panel
+  document.getElementById('p5Comic').classList.add('active');
+
+  let message = "";
+
+  if (boxNum === 1) {
+    message = "Oops… nothing here 👀\nTry another box 😜";
+  }
+  else if (boxNum === 2) {
+    message = "Congratulations 🎉\nYou've just unlocked unlimited hugs and kisses from me for lifetime 🫂💋❤️";
+  }
+  else if (boxNum === 3) {
+    message = "Yayyy! 🎁❤️\nYou found the real surprise!";
+  }
+
+  document.querySelector('.p5-pow').innerText = message;
+
+  // After 4.5 seconds
+  setTimeout(() => {
+
+    document.getElementById('p5Comic').classList.remove('active');
+
+    if (boxNum === 3) {
+      // Existing gift reveal
+      document.getElementById('p5GiftReveal').classList.add('active');
+
+      setTimeout(() => document.getElementById('p5GiftTitle').classList.add('show'), 400);
+      setTimeout(() => document.getElementById('p5GiftSub').classList.add('show'), 1200);
+
+      launchGiftConfetti();
+    }
+    else {
+      // Show boxes again
+      document.getElementById('p5Boxes').style.display = '';
+    }
+
+  }, 4500);
+}
 
   function spawnComicStars(){
     const c = document.getElementById('p5Stars');
@@ -1155,9 +1145,11 @@ timerInterval = setInterval(updateTimer, 1000);
     <h2 class="p5-intro-title" id="p5IntroTitle">It's time for your gift, birthday girl! 🎁</h2>
     <p class="p5-intro-sub" id="p5IntroSub">Pick a box... any box 👀</p>
     <div class="p5-boxes" id="p5Boxes">
-      <div class="p5-box" id="p5Box1" onclick="boxClicked()">🎁</div>
-      <div class="p5-box" id="p5Box2" onclick="boxClicked()">🎀</div>
-      <div class="p5-box" id="p5Box3" onclick="boxClicked()">🎊</div>
+      <div class="p5-box" id="p5Box1" onclick="boxClicked(1)">🎁</div>
+
+      <div class="p5-box" id="p5Box2" onclick="boxClicked(2)">🎀</div>
+
+      <div class="p5-box" id="p5Box3" onclick="boxClicked(3)">🎊</div>
     </div>
   </div>
 </div>
@@ -1187,7 +1179,7 @@ timerInterval = setInterval(updateTimer, 1000);
 <div class="p5-gift-reveal" id="p5GiftReveal">
   <div class="p5-gift-confetti" id="p5GiftConfetti"></div>
   <h2 class="p5-gift-title" id="p5GiftTitle">Once again, Happy Birthday Dear ❤️</h2>
-  <div class="p5-gift-video" id="p5GiftVideo" style="display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:2px dashed rgba(255,255,255,0.4);color:rgba(255,255,255,0.7);font-family:sans-serif;text-align:center;padding:20px;border-radius:12px;opacity:1;transform:none;">Check your cupboard dear</div>
+  <div class="p5-gift-video" id="p5GiftVideo" style="display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:2px dashed rgba(255,255,255,0.4);color:rgba(255,255,255,0.7);font-family:sans-serif;text-align:center;padding:20px;border-radius:12px;opacity:1;transform:none;">Check Your Cupboard Dear ✨</div>
   <p class="p5-gift-sub" id="p5GiftSub">Love you, Diggu 🌹 — always yours ❤️</p>
 </div>
 
