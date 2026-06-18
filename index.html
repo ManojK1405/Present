@@ -612,7 +612,7 @@ const hCfg=[{left:5,size:'1.1rem',op:0.18,dur:14,delay:0},{left:12,size:'0.8rem'
 hCfg.forEach((c,i)=>{const el=document.createElement('div');el.className='heart';el.textContent=heartSymbols[i%heartSymbols.length];const sway=(Math.random()*60-30).toFixed(0)+'px',rot=(Math.random()*30-15).toFixed(0)+'deg';el.style.cssText='left:'+c.left+'%;--size:'+c.size+';--op:'+c.op+';--dur:'+c.dur+'s;--delay:'+c.delay+'s;--sway:'+sway+';--rot:'+rot+';';layer.appendChild(el);});
 
 // Timer
-const BIRTHDAY=new Date('2026-06-18T15:13:00');
+const BIRTHDAY=new Date('2026-06-18T15:19:00');
 function pad(n){return String(n).padStart(2,'0');}
 function updateTimer(){
   const diff=BIRTHDAY-new Date();
